@@ -1,6 +1,7 @@
 package com.rsschool.quiz
 
 interface RouterQuizFragment {
-    fun doNextQuiz()
+    fun doNextQuiz(q: Question)
+    fun doNextWithResult(AnswerSelect: Int)
     fun doPrevQuiz()
 }
