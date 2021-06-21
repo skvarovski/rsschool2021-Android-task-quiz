@@ -13,7 +13,9 @@ import com.rsschool.quiz.databinding.FragmentQuizBinding
 
 
 class QuizFragment : Fragment() {
+    private var _bi: FragmentQuizBinding? = null
     private lateinit var bi: FragmentQuizBinding
+
     private lateinit var routerQuiz: RouterQuizFragment
 
     override fun onAttach(context: Context) {
@@ -34,9 +36,11 @@ class QuizFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //_bi = FragmentQuizBinding.bind(view)
+
         Log.d("TEST", "Start Quiz viewcreate")
         super.onViewCreated(view, savedInstanceState)
-        bi = FragmentQuizBinding.bind(view)
+        //bi = FragmentQuizBinding.bind(view)
         val currentQuiz = arguments?.getSerializable("BUNDLE_QUESTION") as? Question
 
         currentQuiz?.let {
@@ -50,18 +54,25 @@ class QuizFragment : Fragment() {
                     bi.nextButton.isEnabled = false
                 }
                 2 -> {
+                    bi.previousButton.isEnabled = true
                     bi.nextButton.isEnabled = false
                 }
                 3 -> {
+                    bi.previousButton.isEnabled = true
                     bi.nextButton.isEnabled = false
                 }
                 4 -> {
+                    bi.previousButton.isEnabled = true
                     bi.nextButton.isEnabled = false
                 }
                 5-> {
+                    bi.previousButton.isEnabled = true
                     bi.nextButton.isEnabled = false
+                    bi.nextButton.text = "RESULT"
                 }
             }
+
+
             // назначение элементам view данных текущего дата-класса Question
 
             bi.toolbar.title = "Вопрос №${currentQuiz.id}"
@@ -71,14 +82,21 @@ class QuizFragment : Fragment() {
             bi.optionFour.text = currentQuiz.optionAnswers[3]
             bi.optionFive.text = currentQuiz.optionAnswers[4]
             bi.question.text = currentQuiz.question
+
+
+            //если уже был ответ, то его нужно выставить заодно разблокировать кнопку?
+            currentQuiz.optionSelect?.let {
+                val currentCheckButton = bi.radioGroup.getChildAt(it) as? RadioButton
+                currentCheckButton?.isChecked = true
+                bi.nextButton.isEnabled = true
+            }
+
         }
+
         //проверяем изменение среди кнопок для активации "далее"
         bi.radioGroup.setOnCheckedChangeListener { group, checkedId ->
             bi.nextButton.isEnabled = true
         }
-
-
-
 
         // отлавливаем текущее значение при нажатии кнопки для слеюущего шага
         bi.nextButton.setOnClickListener {
@@ -89,6 +107,17 @@ class QuizFragment : Fragment() {
             //отсылаем результар в релизацию интерфейса
             routerQuiz.doNextWithResult(check)
         }
+
+        //кнопка назад
+        bi.previousButton.setOnClickListener {
+            routerQuiz.doPrevQuiz()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // согласно тз
+        _bi = null
     }
 
 
