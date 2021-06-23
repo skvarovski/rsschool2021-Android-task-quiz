@@ -1,5 +1,6 @@
 package com.rsschool.quiz
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -56,18 +57,20 @@ class MainActivity : AppCompatActivity(), RouterQuizFragment, RouterResultFragme
     }
 
 
-    //запуск результата опроса
-    override fun doResult() {
-        //подсчёт правильных ответов
-        val result = (questionList.count {
+    private fun totalResult() =
+        (questionList.count {
             it.optionSelect == it.optionRight
         }) * 100 / questionList.size
+
+
+    //запуск результата опроса
+    override fun doResult() {
         Log.d("TEST",questionList.toString())
 
         //вызов фрагмента с результатом
         supportFragmentManager
             .beginTransaction()
-            .replace(bi.mainFragment.id, ResultFragment.newInstance(result))
+            .replace(bi.mainFragment.id, ResultFragment.newInstance(totalResult()))
             .commit()
     }
 
@@ -78,7 +81,27 @@ class MainActivity : AppCompatActivity(), RouterQuizFragment, RouterResultFragme
     }
 
     override fun doShare() {
-        TODO("Not yet implemented")
+        val text = buildString {
+            append("Ваш результат законознания составил: ${totalResult()} ")
+            append("\n\n")
+            append("Ваши ответы:")
+            questionList.forEachIndexed { index, question ->
+                append("\n Вопрос: ${index+1}. ${question.question}")
+                append("\n Ответ: ${question.optionAnswers[question.optionSelect!!-1]}")
+                append("\n\n")
+            }
+        }
+
+        val intent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            putExtra(Intent.EXTRA_SUBJECT,"Результаты квиза")
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(intent,null)
+        startActivity(shareIntent)
+
     }
 
     override fun doRestart() {
