@@ -7,6 +7,6 @@ data class Question(
     val question: String,
     val optionAnswers: ArrayList<String>,
     val optionRight: Int,
-    var optionSelect: Int?,
+    var optionSelect: Int?, // выбор ответа от пользователя
     val theme: Int
 ): Serializable

@@ -36,15 +36,39 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+        bi.ibBack.setOnClickListener {
+            routerQuiz.doRestart()
+        }
+        bi.ibClose.setOnClickListener {
+            routerQuiz.doClose()
+        }
+        bi.ibShare.setOnClickListener {
+            routerQuiz.doShare()
+        }
+
+        val result = arguments?.getInt("KEY_RESULT",0)
+        result?.let {
+            bi.tvResult.text = getString(R.string.result, it)
+        }
 
     }
 
 
-
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _bi = null
     }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(percent: Int) =
+            ResultFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("KEY_RESULT", percent)
+                }
+            }
+    }
+
 
 
 }

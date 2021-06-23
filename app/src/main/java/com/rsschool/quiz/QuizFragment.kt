@@ -15,13 +15,12 @@ import com.rsschool.quiz.databinding.FragmentQuizBinding
 class QuizFragment : Fragment() {
     private var _bi: FragmentQuizBinding? = null
     private lateinit var bi: FragmentQuizBinding
-
     private lateinit var routerQuiz: RouterQuizFragment
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         routerQuiz = context as MainActivity
-        Log.d("TEST", "Start Quiz attach")
+        //Log.d("TEST", "Start Quiz attach")
 
     }
 
@@ -29,27 +28,38 @@ class QuizFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("TEST", "Start Quiz onCreateView")
+        //Log.d("TEST", "Start Quiz onCreateView")
         bi = FragmentQuizBinding.inflate(layoutInflater)
         return bi.root
     }
 
+    private fun setThemeById(themeId:Int = 0) {
+        when(themeId) {
+            0 -> activity?.setTheme(R.style.Theme_Quiz_First)
+            1 -> activity?.setTheme(R.style.Theme_Quiz_Two)
+            2 -> activity?.setTheme(R.style.Theme_Quiz_Three)
+            3 -> activity?.setTheme(R.style.Theme_Quiz_Four)
+            4 -> activity?.setTheme(R.style.Theme_Quiz_Five)
+            else -> activity?.setTheme(R.style.Theme_Quiz_First)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //_bi = FragmentQuizBinding.bind(view)
-
-        Log.d("TEST", "Start Quiz viewcreate")
+        //Log.d("TEST", "Start Quiz viewcreate")
         super.onViewCreated(view, savedInstanceState)
-        //bi = FragmentQuizBinding.bind(view)
+        bi.previousButton.text = getString(R.string.button_previous)
+        bi.nextButton.text = getString(R.string.button_next)
+
         val currentQuiz = arguments?.getSerializable("BUNDLE_QUESTION") as? Question
 
         currentQuiz?.let {
-
-
+            setThemeById(currentQuiz.theme)
 
             //проверка по Т3 и настройка первого экрана и остальных по порядковому номеру
             when (currentQuiz.id) {
                 1 -> {
+                    bi.toolbar.navigationIcon = null
                     bi.previousButton.isEnabled = false
                     bi.nextButton.isEnabled = false
                 }
@@ -68,14 +78,14 @@ class QuizFragment : Fragment() {
                 5-> {
                     bi.previousButton.isEnabled = true
                     bi.nextButton.isEnabled = false
-                    bi.nextButton.text = "RESULT"
+                    bi.nextButton.text = getString(R.string.button_submit)
                 }
             }
 
 
             // назначение элементам view данных текущего дата-класса Question
 
-            bi.toolbar.title = "Вопрос №${currentQuiz.id}"
+            bi.toolbar.title = getString(R.string.question_number_title,currentQuiz.id)
             bi.optionOne.text = currentQuiz.optionAnswers[0]
             bi.optionTwo.text = currentQuiz.optionAnswers[1]
             bi.optionThree.text = currentQuiz.optionAnswers[2]
@@ -102,7 +112,7 @@ class QuizFragment : Fragment() {
         bi.nextButton.setOnClickListener {
             val checkButtonIn = bi.radioGroup.checkedRadioButtonId
             val checkButton = bi.radioGroup.findViewById<RadioButton>(checkButtonIn)
-            val check = bi.radioGroup.indexOfChild(checkButton)
+            val check = bi.radioGroup.indexOfChild(checkButton)+1
 
             //отсылаем результар в релизацию интерфейса
             routerQuiz.doNextWithResult(check)
@@ -114,12 +124,11 @@ class QuizFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // согласно тз
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         _bi = null
     }
-
 
     companion object {
         @JvmStatic

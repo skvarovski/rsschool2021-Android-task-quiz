@@ -5,4 +5,5 @@ interface RouterQuizFragment {
     fun doNextWithResult(AnswerSelect: Int)
     fun doPrevQuiz()
     fun doResult()
+
 }
