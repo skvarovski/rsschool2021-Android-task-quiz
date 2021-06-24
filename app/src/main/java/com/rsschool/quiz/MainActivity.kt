@@ -1,9 +1,13 @@
 package com.rsschool.quiz
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import com.rsschool.quiz.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), RouterQuizFragment, RouterResultFragment {
@@ -35,7 +39,7 @@ class MainActivity : AppCompatActivity(), RouterQuizFragment, RouterResultFragme
 
     // реализация интерфейса "следующего" экрана квиза
     override fun doNextQuiz(q: Question) {
-        Log.d("TEST","Start Quiz. Current select = {${q?.optionSelect}}")
+        //Log.d("TEST","Start Quiz. Current select = {${q?.optionSelect}}")
         supportFragmentManager
             .beginTransaction()
             .replace(bi.mainFragment.id, QuizFragment.newInstance(q))
@@ -109,27 +113,30 @@ class MainActivity : AppCompatActivity(), RouterQuizFragment, RouterResultFragme
     }
 
     override fun doClose() {
-        //super.onDestroy() - почему-то ошибка с этим вызовом. лупер эррор
+        //super.onDestroy() - почему-то ошибка с этим вызовом. лупер эррор, надо изучить.
         finishAndRemoveTask()
     }
 
     // отрабатываем кнопку "назад"
     override fun onBackPressed() {
-        //Log.d("TEST","index Question = ${indexQuestion}")
+        val fragmentList: List<Fragment> = supportFragmentManager.fragments
+        for (fragment in fragmentList) {
+            // если есть в стеке фрагмент результата, при нажатии кнопки назад делаем рестарт.
+            if (fragment is ResultFragment) {
+                initQuiz()
+                return
+            }
+        }
+        // в противном случае отлистываем экраны задад
         if (indexQuestion > 0) {
             doPrevQuiz()
         } else {
             doClose()
         }
-
-
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
-
     }
-
 
 }

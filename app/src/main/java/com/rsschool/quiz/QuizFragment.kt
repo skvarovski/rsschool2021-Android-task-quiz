@@ -3,11 +3,16 @@ package com.rsschool.quiz
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import android.widget.Toast
+import androidx.annotation.InspectableProperty
+import androidx.core.graphics.toColor
+import androidx.core.os.bundleOf
 import com.rsschool.quiz.databinding.ActivityMainBinding
 import com.rsschool.quiz.databinding.FragmentQuizBinding
 
@@ -34,6 +39,7 @@ class QuizFragment : Fragment() {
     }
 
     private fun setThemeById(themeId:Int = 0) {
+        // применяем тему
         when(themeId) {
             0 -> activity?.setTheme(R.style.Theme_Quiz_First)
             1 -> activity?.setTheme(R.style.Theme_Quiz_Two)
@@ -42,6 +48,11 @@ class QuizFragment : Fragment() {
             4 -> activity?.setTheme(R.style.Theme_Quiz_Five)
             else -> activity?.setTheme(R.style.Theme_Quiz_First)
         }
+        // установка цвета статус бара
+        val typeValueColor = TypedValue()
+        context?.theme?.resolveAttribute(R.attr.colorPrimaryDark,typeValueColor,true)
+        activity?.window?.statusBarColor = typeValueColor.data
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,7 +62,7 @@ class QuizFragment : Fragment() {
         bi.previousButton.text = getString(R.string.button_previous)
         bi.nextButton.text = getString(R.string.button_next)
 
-        val currentQuiz = arguments?.getSerializable("BUNDLE_QUESTION") as? Question
+        val currentQuiz = arguments?.getSerializable(FragmentKeys.KEY_QUEST.value) as? Question
 
         currentQuiz?.let {
             setThemeById(currentQuiz.theme)
@@ -63,15 +74,7 @@ class QuizFragment : Fragment() {
                     bi.previousButton.isEnabled = false
                     bi.nextButton.isEnabled = false
                 }
-                2 -> {
-                    bi.previousButton.isEnabled = true
-                    bi.nextButton.isEnabled = false
-                }
-                3 -> {
-                    bi.previousButton.isEnabled = true
-                    bi.nextButton.isEnabled = false
-                }
-                4 -> {
+                in 2..4 -> {
                     bi.previousButton.isEnabled = true
                     bi.nextButton.isEnabled = false
                 }
@@ -104,7 +107,7 @@ class QuizFragment : Fragment() {
         }
 
         //проверяем изменение среди кнопок для активации "далее"
-        bi.radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        bi.radioGroup.setOnCheckedChangeListener { _, _ ->
             bi.nextButton.isEnabled = true
         }
 
@@ -122,6 +125,10 @@ class QuizFragment : Fragment() {
         bi.previousButton.setOnClickListener {
             routerQuiz.doPrevQuiz()
         }
+        bi.toolbar.setNavigationOnClickListener {
+            //Log.d("TEST","Click to shevron")
+            routerQuiz.doPrevQuiz()
+        }
     }
 
 
@@ -134,9 +141,7 @@ class QuizFragment : Fragment() {
         @JvmStatic
         fun newInstance(question: Question): QuizFragment {
             val fragment = QuizFragment()
-            val args = Bundle()
-            args.putSerializable("BUNDLE_QUESTION", question)
-            fragment.arguments = args
+            fragment.arguments = bundleOf(Pair(FragmentKeys.KEY_QUEST.value,question)) //args
             return fragment
         }
     }

@@ -2,4 +2,12 @@
     <string name="app_name">Quiz</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="button_previous">Назад</string>
+    <string name="button_next">Следующий</string>
+    <string name="button_submit">Отправить</string>
+
+    <string name="question_number_title">Вопрос №%d</string>
+    <string name="result">Ваш результат: %d%%</string>
+
+
 </resources>

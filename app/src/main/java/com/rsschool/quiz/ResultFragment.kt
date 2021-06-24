@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.rsschool.quiz.databinding.FragmentResultBinding
 
 class ResultFragment : Fragment() {
@@ -46,7 +47,7 @@ class ResultFragment : Fragment() {
             routerQuiz.doShare()
         }
 
-        val result = arguments?.getInt("KEY_RESULT",0)
+        val result = arguments?.getInt(FragmentKeys.KEY_PERCENT.value,0)
         result?.let {
             bi.tvResult.text = getString(R.string.result, it)
         }
@@ -61,12 +62,18 @@ class ResultFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(percent: Int) =
+        fun newInstance(percent: Int): ResultFragment {
+            val fragment = ResultFragment()
+            fragment.arguments = bundleOf(Pair(FragmentKeys.KEY_PERCENT.value,percent)) //args
+            return fragment
+        }
+        /*fun newInstance(percent: Int) =
             ResultFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("KEY_RESULT", percent)
-                }
-            }
+                bundleOf(Pair("KEY_RESULT",percent))
+                    //Bundle().apply {
+                    //putInt("KEY_RESULT", percent)
+
+            }*/
     }
 
 
