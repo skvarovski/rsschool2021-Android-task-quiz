@@ -27,10 +27,9 @@ class ResultFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _bi = FragmentResultBinding.inflate(inflater, container, false)
-        val view = bi.root
-        return view
+        return bi.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

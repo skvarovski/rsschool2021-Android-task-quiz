@@ -19,7 +19,7 @@ import com.rsschool.quiz.databinding.FragmentQuizBinding
 
 class QuizFragment : Fragment() {
     private var _bi: FragmentQuizBinding? = null
-    private lateinit var bi: FragmentQuizBinding
+    private val bi: FragmentQuizBinding get() = _bi!!
     private lateinit var routerQuiz: RouterQuizFragment
 
     override fun onAttach(context: Context) {
@@ -32,9 +32,9 @@ class QuizFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         //Log.d("TEST", "Start Quiz onCreateView")
-        bi = FragmentQuizBinding.inflate(layoutInflater)
+        _bi = FragmentQuizBinding.inflate(layoutInflater)
         return bi.root
     }
 
